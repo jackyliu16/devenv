@@ -75,7 +75,21 @@ with lib; let
         ''}
           ) | MYSQL_PWD="" ${cfg.package}/bin/mysql -u root -N
         else
-          echo "Database ${database.name} exists, skipping creation."
+          echo "Database ${database.name} exists, drop it first."
+          ( 
+	  echo 'drop database `${database.name}`;'
+          echo 'create database `${database.name}`;'
+            ${optionalString (database.schema != null) ''
+          echo 'use `${database.name}`;'
+          if [ -f "${database.schema}" ]
+          then
+              cat ${database.schema}
+          elif [ -d "${database.schema}" ]
+          then
+              cat ${database.schema}/mysql-databases/*.sql
+          fi
+        ''}
+          ) | MYSQL_PWD="" ${cfg.package}/bin/mysql -u root -N
         fi
       '')
       cfg.initialDatabases}
