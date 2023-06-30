@@ -9,7 +9,7 @@ with lib; let
   format = pkgs.formats.ini { listsAsDuplicateKeys = true; };
   configFile = format.generate "my.cnf" cfg.settings;
   mysqlOptions = "--defaults-file=${configFile}";
-  mysqldOptions = "${mysqlOptions} --datadir=$MYSQL_HOME --basedir=${cfg.package}";
+  mysqldOptions = "${mysqlOptions} --datadir=$MYSQL_HOME --basedir=${cfg.package} --user=root";
 
   initDatabaseCmd =
     if isMariaDB
